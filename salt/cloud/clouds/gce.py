@@ -1920,6 +1920,44 @@ def reboot(vm_name, call=None):
         conn.ex_get_node(vm_name)
     )
 
+def start(vm_name, call=None):
+    '''
+    Call GCE 'reset' on the instance.
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt-cloud -a start myinstance
+    '''
+    if call != 'action':
+        raise SaltCloudSystemExit(
+            'The reboot action must be called with -a or --action.'
+        )
+    conn = get_conn()
+    return conn.ex_start_node(
+        conn.ex_get_node(vm_name)
+    )
+
+def stop(vm_name, call=None):
+    '''
+    Call GCE 'reset' on the instance.
+
+    CLI Example:
+
+    .. code-block:: bash
+
+        salt-cloud -a stop myinstance
+    '''
+    if call != 'action':
+        raise SaltCloudSystemExit(
+            'The reboot action must be called with -a or --action.'
+        )
+    conn = get_conn()
+    return conn.ex_stop_node(
+        conn.ex_get_node(vm_name)
+    )
+
 
 def destroy(vm_name, call=None):
     '''
