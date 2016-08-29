@@ -1935,9 +1935,30 @@ def start(vm_name, call=None):
             'The reboot action must be called with -a or --action.'
         )
     conn = get_conn()
-    return conn.ex_start_node(
-        conn.ex_get_node(vm_name)
+    __utils__['cloud.fire_event'](
+        'event',
+        'start instance',
+        'salt/cloud/{0}/starting'.format(vm_name),
+        args={
+            'name': vm_name,
+        },
+        sock_dir=__opts__['sock_dir'],
+        transport=__opts__['transport']
     )
+    result = conn.ex_start_node(conn.ex_get_node(vm_name))
+
+    __utils__['cloud.fire_event'](
+        'event',
+        'start instance',
+        'salt/cloud/{0}/started'.format(vm_name),
+        args={
+            'name': vm_name,
+        },
+        sock_dir=__opts__['sock_dir'],
+        transport=__opts__['transport']
+    )
+
+    return result
 
 def stop(vm_name, call=None):
     '''
@@ -1954,10 +1975,31 @@ def stop(vm_name, call=None):
             'The reboot action must be called with -a or --action.'
         )
     conn = get_conn()
-    return conn.ex_stop_node(
-        conn.ex_get_node(vm_name)
+
+    __utils__['cloud.fire_event'](
+        'event',
+        'stop instance',
+        'salt/cloud/{0}/stopping'.format(vm_name),
+        args={
+            'name': vm_name,
+        },
+        sock_dir=__opts__['sock_dir'],
+        transport=__opts__['transport']
     )
 
+    result = conn.ex_stop_node(conn.ex_get_node(vm_name))
+
+    __utils__['cloud.fire_event'](
+        'event',
+        'stop instance',
+        'salt/cloud/{0}/stopped'.format(vm_name),
+        args={
+            'name': vm_name,
+        },
+        sock_dir=__opts__['sock_dir'],
+        transport=__opts__['transport']
+    )
+    return result
 
 def destroy(vm_name, call=None):
     '''
